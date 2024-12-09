@@ -96,6 +96,7 @@
 </nav>
 <!-- Navbar End -->
 
+
 <!-- Carousel Start -->
 <div class="container-fluid p-0 pb-5">
     <div class="owl-carousel header-carousel position-relative mb-5">
@@ -115,9 +116,12 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<!--Carousel End-->    
 
 
-<!-- Shop Start -->
+<!-- Description Start -->
 <div class="container-xxl py-5">
     <div class="container py-5">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
@@ -154,14 +158,12 @@
                 </div>
             </div>
         </div>
-        </div>
         <div class="text-center mt-5">
             <a class="btn btn-primary py-3 px-5" href="#">Pesan Sekarang</a>
         </div>
     </div>
 </div>
-<!-- Shop End -->
-
+<!-- Description End -->
 
 
 
@@ -172,8 +174,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page Mega Buana</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link ke file CSS -->
-    <script defer src="scripts.js"></script> <!-- Link ke file JavaScript -->
+    <link rel="stylesheet" href="style.css"> <!-- Link ke file CSS -->
 </head>
 <body>
 
@@ -194,16 +195,16 @@
             </div>
             <div class="col-lg-7">
                 <div class="bg-light text-center p-5 wow fadeIn" data-wow-delay="0.5s">
-                    <form>
+                    <form id="orderForm">
                         <div class="row g-3">
                             <div class="col-12 col-sm-6">
-                                <input type="text" class="form-control border-0" placeholder="Your Name" style="height: 55px;">
+                                <input type="text" id="name" class="form-control border-0" placeholder="Your Name" style="height: 55px;" required>
                             </div>
                             <div class="col-12 col-sm-6">
-                                <input type="email" class="form-control border-0" placeholder="Your Email" style="height: 55px;">
+                                <input type="email" id="email" class="form-control border-0" placeholder="Your Email" style="height: 55px;" required>
                             </div>
                             <div class="col-12 col-sm-6">
-                                <input type="text" class="form-control border-0" placeholder="Your Mobile" style="height: 55px;">
+                                <input type="text" id="mobile" class="form-control border-0" placeholder="Your Mobile" style="height: 55px;" required>
                             </div>
                             <div class="col-12 col-sm-6">
                                 <input 
@@ -213,48 +214,75 @@
                                     placeholder="Masukkan Berat (kg)" 
                                     style="height: 55px;" 
                                     oninput="updatePrice()"
-                                    min="0"
+                                    min="0.1"
                                     step="0.1"
+                                    required
                                 >
                             </div>
                             <div class="col-12">
-                                <textarea class="form-control border-0" placeholder="Special Note"></textarea>
-                            </div>
-                            <div class="col-12">
-                                <button class="btn btn-primary w-100 py-3" type="submit">Submit</button>
+                                <textarea class="form-control border-0" id="note" placeholder="Alamat Anda"></textarea>
                             </div>
                             <div class="col-12">
                                 <h5 id="priceDisplay" class="text-center mt-3">Harga: Rp. 0</h5>
                             </div>
+                            <div class="col-12">
+                                <button class="btn btn-primary w-100 py-3" type="submit">Bayar Sekarang</button>
+                            </div>
                         </div>
-                    </form>
-                </div>
-            </div>
-            
-            <script>
-                const pricePerKg = 40000; // Harga per kg
-            
-                function updatePrice() {
-                    const weightInput = document.getElementById("weight").value; // Ambil berat dari input
-                    const priceDisplay = document.getElementById("priceDisplay"); // Elemen untuk menampilkan harga
-            
-                    // Pastikan berat valid (tidak negatif atau kosong)
-                    const weight = parseFloat(weightInput) || 0;
-            
-                    // Hitung total harga
-                    const totalPrice = weight * pricePerKg;
-            
-                    // Format harga dan tampilkan
-                    priceDisplay.textContent = `Harga: Rp. ${totalPrice.toLocaleString()}`;
-                }
-            </script>                                               
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    const pricePerKg = 40000; // Harga per kg
+
+    // Fungsi untuk mengupdate harga
+    function updatePrice() {
+        const weightInput = document.getElementById("weight").value; // Berat dari input
+        const priceDisplay = document.getElementById("priceDisplay"); // Elemen harga
+
+        // Pastikan berat valid (tidak negatif atau kosong)
+        const weight = parseFloat(weightInput) || 0;
+
+        // Hitung total harga
+        const totalPrice = weight * pricePerKg;
+
+        // Format harga dan tampilkan
+        priceDisplay.textContent = `Harga: Rp. ${totalPrice.toLocaleString()}`;
+    }
+
+    // Event Listener untuk form submission
+    document.getElementById('orderForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Cegah form dari pengiriman default
+
+        // Ambil data dari form
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const mobile = document.getElementById('mobile').value;
+        const weight = parseFloat(document.getElementById('weight').value) || 0;
+        const note = document.getElementById('note').value;
+        const totalPrice = weight * pricePerKg;
+
+        // Pastikan ada berat yang diinput
+        if (weight <= 0) {
+            alert('Mohon masukkan berat yang valid!');
+            return;
+        }
+
+        // URL payment link Midtrans (sesuaikan dengan Payment Link Anda)
+        const paymentLink = 'https://app.midtrans.com/payment-links/1733751966762'; // Ganti dengan Payment Link Anda
+
+        // Redirect ke link payment dengan data tambahan
+        const paymentUrl = `${paymentLink}?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&mobile=${encodeURIComponent(mobile)}&weight=${weight}&note=${encodeURIComponent(note)}&price=${totalPrice}`;
+
+        window.location.href = paymentUrl; // Arahkan pengguna ke Payment Link
+    });
+</script>
 <!-- Order End -->
+
 
 
 
